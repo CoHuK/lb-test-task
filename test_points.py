@@ -28,7 +28,7 @@ STAKER_START_POINT = {
 }
 
 
-
+@allure.step("Get the hours difference between two dates")
 def get_hours_difference(date1, date2):
     d1 = datetime.fromisoformat(date1.replace("Z", "+00:00"))
     d2 = datetime.fromisoformat(date2.replace("Z", "+00:00"))
@@ -38,12 +38,16 @@ def get_hours_difference(date1, date2):
 
     return diff_hours
 
+@allure.step("Get points for address")
+def get_points_for_address(address):
+    response = requests.get(API_ENDPOINT + address)
+    assert response.status_code == 200
+    return response.json()
+
 @allure.title("Test points getter request")
 @allure.description("Test that the points getter request returns 200 status code and has the correct data structure")
 def test_get_points():
-    response = requests.get(API_ENDPOINT + OPERATOR_TEST_ADDRESS)
-    assert response.status_code == 200
-    parsed_response =  response.json()
+    parsed_response =  get_points_for_address(OPERATOR_TEST_ADDRESS)
     today = datetime.now().date().isoformat()
     assert today in parsed_response["date"]
     assert float(parsed_response["points"]) > float(OPERATOR_START_POINT["points"])
@@ -52,8 +56,7 @@ def test_get_points():
 @allure.title("Test Staker points calculation")
 @allure.description("Test that the staker points are calculated correctly based on the staker's stake and the time passed since the last points calculation\nThe staker receives 1 point per hour based on the 1 ETH that was delegated to operator(s) that are registered to eoracle")
 def test_staker_points_calculation():
-    response = requests.get(API_ENDPOINT + STAKER_TEST_ADDRESS)
-    parsed_response =  response.json()
+    parsed_response =  get_points_for_address(STAKER_TEST_ADDRESS)
     last_points_date = parsed_response["date"]
     hours_difference = get_hours_difference(STAKER_START_POINT["date"], last_points_date)
     assert float(parsed_response["points"]) == (float(STAKER_START_POINT["points"]) + hours_difference * float(STAKER_START_POINT["stake"]))
@@ -61,8 +64,7 @@ def test_staker_points_calculation():
 @allure.title("Test Operator points calculation")
 @allure.description("Test that the operator points are calculated correctly based on the operator's stake and the time passed since the last points calculation\nThe operator receives 1 points per hour based on 3% of the total ETH that was delegated to it by stakers.")
 def test_operator_points_calculation():
-    response = requests.get(API_ENDPOINT + OPERATOR_TEST_ADDRESS)
-    parsed_response =  response.json()
+    parsed_response =  get_points_for_address(OPERATOR_TEST_ADDRESS)
     last_points_date = parsed_response["date"]
     hours_difference = get_hours_difference(OPERATOR_START_POINT["date"], last_points_date)
     expected_points = float(OPERATOR_START_POINT["points"]) + hours_difference * float(OPERATOR_START_POINT["stake"]) * 0.03
