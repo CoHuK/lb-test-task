@@ -1,0 +1,6 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"failed","Wed May 29 17:24:53 GMT 2024","Wed May 29 17:24:53 GMT 2024","559","","test_points","","","","Test Staker points calculation","Test that the staker points are calculated correctly based on the staker's stake and the time passed since the last points calculation
+The staker receives 1 point per hour based on the 1 ETH that was delegated to operator(s) that are registered to eoracle"
+"passed","Wed May 29 17:24:52 GMT 2024","Wed May 29 17:24:53 GMT 2024","596","","test_points","","","","Test points getter request","Test that the points getter request returns 200 status code and has the correct data structure"
+"failed","Wed May 29 17:24:53 GMT 2024","Wed May 29 17:24:53 GMT 2024","228","","test_points","","","","Test Operator points calculation","Test that the operator points are calculated correctly based on the operator's stake and the time passed since the last points calculation
+The operator receives 1 points per hour based on 3% of the total ETH that was delegated to it by stakers."
