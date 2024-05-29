@@ -1,6 +1,6 @@
 name: Run Pytest and generate allure report
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -9,14 +9,46 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+            distribution: zulu
+            java-version: 17
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
           python-version: "3.9"
-      # You can test your matrix by printing the current Python version
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
+      - name: Install allure
+        run: |
+          sudo apt-add-repository ppa:qameta/allure
+          sudo apt-get update
+          sudo apt-get install allure
+      - name: Load test report history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
+            ref: gh-pages
+            path: gh-pages
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          pytest --alluredir=allure-results
+          - name: Build test report
+          uses: simple-elf/allure-report-action@v1.7
+          if: always()
+          with:
+            gh_pages: gh-pages
+            allure_history: allure-history
+            allure_results: allure-results
+  
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_branch: gh-pages
+            publish_dir: allure-history
