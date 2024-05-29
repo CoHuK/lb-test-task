@@ -73,6 +73,7 @@ Issues will be reported into the task tracker with label "Points_calculation" in
 
 Do be set with product owner.
 Possible risks:
+
 * blockchain network instability
 * high gas prices affecting smart contract interactions
 * resources unavailability
