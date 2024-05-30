@@ -97,3 +97,23 @@ Possible risks:
 * CTO
 
 Sign offs are to be done in the release ticket http://jira
+
+## Unit tests suggestions
+
+1. Calculation Logic
+
+* Ensure that a staker receives exactly 1 point per hour for each ETH staked
+* Ensure that an operator receives points equivalent to 3% of total ETH staked by all stakers per hour
+
+2. Data Handling
+
+* Confirm that operator registration is recognized by the system and handled correctly
+* Verify that when a staker delegates ETH, the system correctly updates the staked amount
+* Check the system correctly handles and calculates points when a staker undelegates ETH
+* Assure that multiple delegations to different operators are handled accurately
+
+3. Edge Cases
+
+* Check how the system handles a scenario where a staker or operator has zero staked ETH
+* Ensure the system handles simultaneous delegations and undelegations correctly without data corruption or loss (Transactions got into one block?)
+* Confirm the system gracefully handles invalid input data (e.g., negative values, non-numeric types)
